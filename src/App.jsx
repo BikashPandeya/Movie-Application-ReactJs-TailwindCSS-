@@ -24,12 +24,14 @@ const App = () => {
   const [movielist, setmovielist] = useState([]);
   const [isloading, setisloading] = useState(false);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = "") => {
     setisloading(true);
     seterrormessage("");
 
     try {
-      const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&api_key=${API_KEY}`;
+      const endpoint = query
+        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&api_key=${API_KEY}`;
 
       const response = await fetch(endpoint, API_OPTIONS);
 
@@ -53,8 +55,8 @@ const App = () => {
   };
 
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    fetchMovies(searchTerm);
+  }, [searchTerm]);
 
   return (
     <main className="relative w-screen h-screen bg-cover bg-center bg-no-repeat bg-[url('/BG.png')]">
@@ -78,7 +80,7 @@ const App = () => {
           ) : (
             <ul>
               {movielist.map((movie) => (
-                <MovieCard key={movie.id} movie ={movie} />
+                <MovieCard key={movie.id} movie={movie} />
               ))}
             </ul>
           )}
