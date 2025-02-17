@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Search from "./components/search";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
+import { useDebounce } from "react-use";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -17,12 +18,24 @@ const API_OPTIONS = {
 };
 
 const App = () => {
-  const [searchTerm, setsearchTerm] = useState("");
+  const [searchTerm, setsearchTerm] = useState(""); // Stores user input
 
   const [errormessage, seterrormessage] = useState("");
 
   const [movielist, setmovielist] = useState([]);
   const [isloading, setisloading] = useState(false);
+
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Stores debounced value
+
+  // Debounce the search term to prevent making too many API requests
+  // by waiting for the user to stop typing for 500ms
+  useDebounce(
+    () => {
+      setDebouncedSearchTerm(searchTerm); // Update debounced state
+    },
+    500, // Debounce delay (500ms) . I means waits for user typing for 500ms before rendring it
+    [searchTerm] // Runs when searchTerm changes
+  );
 
   const fetchMovies = async (query = "") => {
     setisloading(true);
@@ -55,8 +68,8 @@ const App = () => {
   };
 
   useEffect(() => {
-    fetchMovies(searchTerm);
-  }, [searchTerm]);
+    fetchMovies(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   return (
     <main className="relative w-screen h-screen bg-cover bg-center bg-no-repeat bg-[url('/BG.png')]">
