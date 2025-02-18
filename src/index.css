@@ -161,3 +161,31 @@
   }
 }
 
+
+/* Hide vertical scrollbar completely */
+.no-scrollbar {
+  overflow-y: hidden; /* Prevent vertical scrolling */
+}
+
+/* Customize the horizontal scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  width: 0px; /* Remove vertical scrollbar */
+  height: 6px; /* Thin horizontal scrollbar */
+}
+
+.no-scrollbar::-webkit-scrollbar-track {
+  background: #1a0a3f; /* Dark violet-indigo background */
+  border-radius: 10px;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b0082; /* Indigo scrollbar */
+  border-radius: 10px;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+  scrollbar-width: thin; /* Keep horizontal scrollbar thin in Firefox */
+  scrollbar-color: #4b0082 #1a0a3f; /* Thumb color and track color */
+}
+

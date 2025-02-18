@@ -29,7 +29,7 @@ const App = () => {
 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Stores debounced value
 
-  const [TrendingMovies, setTrendingMovies] = useState([])
+  const [TrendingMovies, setTrendingMovies] = useState([]);
 
   // Debounce the search term to prevent making too many API requests
   // by waiting for the user to stop typing for 500ms
@@ -41,15 +41,16 @@ const App = () => {
     [searchTerm] // Runs when searchTerm changes
   );
 
-  const fetchMovies = async (query = "") => {
-    const loadTrendingMovies = async () => {
-        try {
-          const movies = await getTrendingMovies()
-        } catch (error) {
-          console.error(`Error fetching trending movies : ${error}`)
-        }
-      }
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
 
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.error(`Error fetching trending movies : ${error}`);
+    }
+  };
+  const fetchMovies = async (query = "") => {
 
     setisloading(true);
     seterrormessage("");
@@ -73,8 +74,8 @@ const App = () => {
 
       setmovielist(data.results || []);
 
-      if(query && data.results.length > 0){
-        await updateSearchCount(query , data.results[0])
+      if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
       }
     } catch (error) {
       console.error(`Error fetching movies : ${error}`);
@@ -87,6 +88,10 @@ const App = () => {
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    loadTrendingMovies()
+  }, []);
 
   return (
     <main className="relative w-screen h-screen bg-cover bg-center bg-no-repeat bg-[url('/BG.png')]">
@@ -101,8 +106,33 @@ const App = () => {
           </h1>
           <Search searchTerm={searchTerm} setsearchTerm={setsearchTerm} />
         </header>
+
+        {TrendingMovies.length > 0 && (
+  <section className="w-full overflow-hidden bg-[#0a001f] p-4">
+    <h2 className="text-2xl font-bold text-white mb-4">Trending Movies</h2>
+
+    <div className="flex gap-4 overflow-x-scroll scrollbar-hide whitespace-nowrap no-scrollbar">
+      {TrendingMovies.map((movie, index) => (
+        <div key={movie.$id} className="flex-shrink-0 w-48 text-center">
+          {console.log(`Trending movies: ${movie.title}`)}
+          <img
+            src={movie.poster_url}
+            alt={movie.title}
+            className="w-full h-64 object-cover rounded-lg shadow-lg"
+          />
+          <p className="text-4xl font-extrabold mt-2 text-violet-500">
+            {index + 1}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+
+
         <section className="all-movies">
-          <h2 className="mt-20">All Movies</h2>
+          <h2>All Movies</h2>
           {isloading ? (
             <Spinner />
           ) : errormessage ? (
